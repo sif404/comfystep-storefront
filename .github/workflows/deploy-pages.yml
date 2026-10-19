@@ -1,5 +1,6 @@
 name: Deploy Comfystep Storefront to GitHub Pages
 
+# Fresh publish: build the latest storefront and deploy it to the project Pages URL.
 on:
   push:
     branches: [main]
