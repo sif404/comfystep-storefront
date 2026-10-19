@@ -47,21 +47,3 @@ Thumbs.db
 # Replit
 .cache/
 .local/
-
-# Environment and secrets
-.env
-.env.*
-!.env.example
-!.env.*.example
-*.pem
-*.key
-*.p12
-*.pfx
-credentials*.json
-*service-account*.json
-secrets/
-
-# Local databases
-*.db
-*.sqlite
-*.sqlite3
