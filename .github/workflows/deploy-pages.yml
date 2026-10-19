@@ -1,6 +1,6 @@
 name: Deploy Comfystep Storefront to GitHub Pages
 
-# Fresh publish: build the latest storefront and deploy it to the project Pages URL.
+# Fresh publish: build the latest storefront and deploy it to the custom domain.
 on:
   push:
     branches: [main]
@@ -38,7 +38,7 @@ jobs:
       - name: Build storefront
         run: pnpm --filter @workspace/comfora-storefront build
         env:
-          BASE_PATH: /comfystep-storefront/
+          BASE_PATH: /
 
       - name: Prepare Pages artifact
         uses: actions/upload-pages-artifact@v3
