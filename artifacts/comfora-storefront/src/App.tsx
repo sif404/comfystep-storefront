@@ -86,10 +86,10 @@ const SIZE_OPTIONS = ['35-36', '37-38', '39-40', '41-42', '43-44', '45-46'];
 const purposeSlides = [
   { image: mountainTrailImage, title: 'الرحلات الجبلية', alt: 'متنزه يصعد مسارًا جبليًا وسط الطبيعة' },
   { image: tennisImage, title: 'الرياضة والحركة', alt: 'لاعب تنس يتحرك نحو الكرة في الملعب' },
-  { image: hikingImage, title: 'المغامرات', alt: 'متنزه يمشي في مسار جبلي بنعل comfystep' },
-  { image: everydayImage, title: 'المشاوير اليومية', alt: 'رجل يمشي مع كلبه في الحديقة مرتديًا نعل comfystep' },
+  { image: hikingImage, title: 'المغامرات', alt: 'متنزه يمشي في مسار جبلي بضبان comfystep' },
+  { image: everydayImage, title: 'المشاوير اليومية', alt: 'رجل يمشي مع كلبه في الحديقة مرتديًا ضبان comfystep' },
   { image: longShiftImage, title: 'ساعات العمل الطويلة', alt: 'عامل يقف في مستودع خلال ساعات العمل' },
-  { image: fieldWorkImage, title: 'العمل الميداني', alt: 'عامل في موقع بناء يرتدي نعل comfystep' },
+  { image: fieldWorkImage, title: 'العمل الميداني', alt: 'عامل في موقع بناء يرتدي ضبان comfystep' },
 ];
 const brandComparisonFeatures = [
   { label: 'توسيد مريح', comfystep: true, alternatives: false },
@@ -178,11 +178,11 @@ function Header({ cartCount, onOpenCart }: { cartCount: number; onOpenCart: () =
 
 function Hero() {
   const slides: { src: string; alt: string; contain?: boolean }[] = [
-    { src: carouselImageFour, alt: 'حذاء comfystep مع النعل البرتقالي وميزات الراحة' },
-    { src: insoleDetailsImage, alt: 'نعل Comfystep مع توضيح التهوية والتوسيد ودعم قوس القدم', contain: true },
-    { src: productImage, alt: 'نعال comfystep البرتقالية فوق صندوق برتقالي' },
-    { src: carouselImageTwo, alt: 'نعال comfystep البرتقالية متقاطعة فوق منصة دائرية' },
-    { src: carouselImageThree, alt: 'نعال comfystep البرتقالية على منصة دائرية مضيئة' },
+    { src: carouselImageFour, alt: 'حذاء comfystep مع الضبان البرتقالي وميزات الراحة' },
+    { src: insoleDetailsImage, alt: 'ضبان Comfystep مع توضيح التهوية والتوسيد ودعم قوس القدم', contain: true },
+    { src: productImage, alt: 'ضبان comfystep البرتقالية فوق صندوق برتقالي' },
+    { src: carouselImageTwo, alt: 'ضبان comfystep البرتقالية متقاطعة فوق منصة دائرية' },
+    { src: carouselImageThree, alt: 'ضبان comfystep البرتقالية على منصة دائرية مضيئة' },
   ];
   const [activeSlide, setActiveSlide] = useState(0);
   const touchStartX = useRef<number | null>(null);
@@ -238,7 +238,7 @@ function Hero() {
             className="hero-image-wrap hero-carousel"
             role="region"
             aria-roledescription="carousel"
-            aria-label="صور نعال comfystep"
+            aria-label="صور ضبان comfystep"
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
@@ -393,7 +393,7 @@ function Story() {
     <section className="section section-tint" id="story" aria-labelledby="story-title">
       <div className="container-wide story-grid">
         <div className="story-visual">
-          <img className="story-image" src={storyImage} alt="نعال comfystep البرتقالية والبيضاء مع تفاصيل التهوية والدعم" />
+          <img className="story-image" src={storyImage} alt="ضبان comfystep البرتقالية والبيضاء مع تفاصيل التهوية والدعم" />
         </div>
         <div className="story-copy">
           <span className="kicker">مصممة للحياة الحقيقية</span>
@@ -422,12 +422,12 @@ function Comparison() {
     <section className="section comparison-section" aria-labelledby="comparison-title" data-testid="section-comparison">
       <div className="container-wide">
         <div className="comparison-main">
-          <div className="comparison-stage" aria-label="مقارنة مرئية قبل وبعد استخدام نعل comfystep">
-            <img className="comparison-image comparison-after" src={footAfterImage} alt="بعد: القدم مع نعل comfystep" />
+          <div className="comparison-stage" aria-label="مقارنة مرئية قبل وبعد استخدام ضبان comfystep">
+            <img className="comparison-image comparison-after" src={footAfterImage} alt="بعد: القدم مع ضبان comfystep" />
             <img
               className="comparison-image comparison-before"
               src={footBeforeImage}
-              alt="قبل: القدم دون نعل comfystep"
+              alt="قبل: القدم دون ضبان comfystep"
               style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}
             />
             <span className="comparison-label comparison-label-before" aria-hidden="true">Before</span>
@@ -694,7 +694,7 @@ function Footer() {
           <div>
             <h3>روابط سريعة</h3>
             <div className="footer-links">
-              <button className="footer-link" onClick={() => scrollToSection('pricing')} data-testid="footer-shop">تسوّق النعال</button>
+              <button className="footer-link" onClick={() => scrollToSection('pricing')} data-testid="footer-shop">تسوّق الضبان</button>
               <button className="footer-link" onClick={() => scrollToSection('story')} data-testid="footer-about">عن comfystep</button>
               <button className="footer-link" onClick={() => scrollToSection('faq')} data-testid="footer-faq">الأسئلة الشائعة</button>
             </div>
@@ -754,7 +754,7 @@ function CartDrawer({ tier, pairSelections, open, onClose, onRemove, onCheckout 
             <div className="cart-item" data-testid="cart-item-selected">
               <img className="cart-thumb" src={productImage} alt="" />
               <div className="cart-item-copy">
-                <h3>نعال comfystep الطبية</h3>
+                <h3>ضبان comfystep الطبية</h3>
                <p>{tier.title} · {DELIVERY_TAGLINE}</p>
                 <div className="cart-variants">
                   {pairSelections.map((pair, index) => <span key={index}>#{index + 1} · {pair.color} · {pair.size}</span>)}
@@ -1090,7 +1090,7 @@ function OrderConfirmation() {
             <div className="order-product-head">
               <img src={productImage} alt="" />
               <span className="order-quantity-badge">{order.pairs.length}</span>
-              <div><h2>نعال comfystep الطبية</h2><p>{tier.title}</p></div>
+              <div><h2>ضبان comfystep الطبية</h2><p>{tier.title}</p></div>
             </div>
             <div className="order-pair-lines">
               {order.pairs.map((pair, index) => <div key={`${pair.color}-${pair.size}-${index}`}><span>زوج {index + 1}</span><strong>{pair.color} · {pair.size}</strong></div>)}
