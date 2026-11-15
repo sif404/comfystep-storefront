@@ -96,4 +96,56 @@ jobs:
       - name: Create database tables
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: pnpm --filter @workspace/db push
+        run: |
+          node - <<'NODE'
+          const { Client } = require('./lib/db/node_modules/pg');
+          const client = new Client({
+            connectionString: process.env.DATABASE_URL,
+            ssl: { rejectUnauthorized: false },
+            connectionTimeoutMillis: 10000
+          });
+          const ddl = `
+          CREATE TABLE IF NOT EXISTS "orders" (
+            "id" serial PRIMARY KEY NOT NULL,
+            "order_number" integer NOT NULL,
+            "order_token" uuid NOT NULL,
+            "created_at" timestamp with time zone DEFAULT now() NOT NULL,
+            "first_name" text NOT NULL,
+            "last_name" text NOT NULL,
+            "phone" text NOT NULL,
+            "address" text NOT NULL,
+            "city" text NOT NULL,
+            "pairs" jsonb NOT NULL,
+            "items_text" text NOT NULL,
+            "subtotal" numeric(10,2) NOT NULL,
+            "discount" numeric(10,2) NOT NULL,
+            "shipping" text DEFAULT '' NOT NULL,
+            "total" numeric(10,2) NOT NULL,
+            "payment_method" text NOT NULL,
+            "synced" boolean DEFAULT false NOT NULL,
+            "sync_attempts" integer DEFAULT 0 NOT NULL,
+            "last_sync_attempt_at" timestamp with time zone
+          );
+          CREATE UNIQUE INDEX IF NOT EXISTS "orders_order_number_unique" ON "orders" ("order_number");
+          CREATE UNIQUE INDEX IF NOT EXISTS "orders_order_token_unique" ON "orders" ("order_token");
+          `;
+          (async()=>{
+            try {
+              await client.connect();
+              await client.query('BEGIN');
+              await client.query(ddl);
+              const {rows}=await client.query("SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name='orders'");
+              const required=['id','order_number','order_token','created_at','first_name','last_name','phone','address','city','pairs','items_text','subtotal','discount','shipping','total','payment_method','synced','sync_attempts','last_sync_attempt_at'];
+              const missing=required.filter(name=>!rows.some(r=>r.column_name===name));
+              if(missing.length) throw Error('Orders table schema missing columns: '+missing.join(','));
+              await client.query('COMMIT');
+              console.log('SUCCESS: orders table and indexes ready; '+rows.length+' columns verified.');
+            } catch(e) {
+              try { await client.query('ROLLBACK'); } catch {}
+              console.error('Database initialization failed:',e.code||'',String(e.message).slice(0,300));
+              process.exitCode=1;
+            } finally {
+              await client.end().catch(()=>{});
+            }
+          })();
+          NODE
