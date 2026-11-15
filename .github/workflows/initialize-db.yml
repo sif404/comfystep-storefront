@@ -81,7 +81,7 @@ jobs:
               return true;
             } catch(e) {
               console.log('PostgreSQL connection error code:',e.code||'unknown');
-              console.log('PostgreSQL connection error:',String(e.message).replace(/postgres(?:ql)?:\\/\\/[^\\s]+/g,'[database-url-redacted]'));
+              console.log('PostgreSQL connection error:', String(e.message).slice(0,300));
               try { await client.end(); } catch {}
               return false;
             }
