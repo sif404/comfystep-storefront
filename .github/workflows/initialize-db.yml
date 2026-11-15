@@ -29,6 +29,39 @@ jobs:
             echo "::error::Add the DATABASE_URL repository secret using the Render External Database URL."
             exit 1
           fi
+      - name: Check PostgreSQL connectivity
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          node - <<'NODE'
+          const { URL } = require('node:url');
+          const net = require('node:net');
+          const dns = require('node:dns').promises;
+          async function main() {
+            const raw = process.env.DATABASE_URL;
+            let url;
+            try { url = new URL(raw); } catch { throw new Error('DATABASE_URL is not a valid URL. Copy the full Render External Database URL.'); }
+            if (!['postgres:', 'postgresql:'].includes(url.protocol)) throw new Error('DATABASE_URL must use postgres:// or postgresql://');
+            if (!url.hostname) throw new Error('DATABASE_URL has no hostname');
+            const host = url.hostname;
+            const port = Number(url.port || 5432);
+            console.log('Connection URL format: valid');
+            console.log('External endpoint check:');
+            let addresses;
+            try { addresses = await dns.lookup(host, {all:true}); }
+            catch (err) { throw new Error('DNS resolution failed ('+err.code+'). Ensure GitHub Secret uses the EXTERNAL database URL, not Internal.'); }
+            console.log('DNS resolution: success');
+            await new Promise((resolve,reject)=>{
+              const socket = net.connect({host,port});
+              socket.setTimeout(8000);
+              socket.once('connect',()=>{socket.destroy();resolve();});
+              socket.once('timeout',()=>{socket.destroy();reject(new Error('TCP connection timed out. Check External Database URL and database status.'));});
+              socket.once('error',(err)=>reject(new Error('TCP connection failed: '+err.code)));
+            });
+            console.log('TCP connection: success');
+          }
+          main().catch(err=>{console.error('Database connectivity check failed:',err.message);process.exitCode=1;});
+          NODE
       - name: Create database tables
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
