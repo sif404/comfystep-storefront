@@ -62,6 +62,37 @@ jobs:
           }
           main().catch(err=>{console.error('Database connectivity check failed:',err.message);process.exitCode=1;});
           NODE
+      - name: Test database authentication and SQL query
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          node - <<'NODE'
+          const { Client } = require('./lib/db/node_modules/pg');
+          const raw=process.env.DATABASE_URL;
+          async function test(ssl) {
+            const client = new Client({connectionString:raw, ssl, connectionTimeoutMillis:8000});
+            try {
+              await client.connect();
+              const result=await client.query('select current_database() as db, current_user as username, (select count(*) from information_schema.tables where table_schema = $1) as tables', ['public']);
+              console.log('PostgreSQL authentication: success');
+              console.log('SQL query: success');
+              console.log('Existing public tables:', result.rows[0].tables);
+              await client.end();
+              return true;
+            } catch(e) {
+              console.log('PostgreSQL connection error code:',e.code||'unknown');
+              console.log('PostgreSQL connection error:',String(e.message).replace(/postgres(?:ql)?:\\/\\/[^\\s]+/g,'[database-url-redacted]'));
+              try { await client.end(); } catch {}
+              return false;
+            }
+          }
+          (async()=>{
+            if(await test(undefined)) return;
+            console.log('Retrying with SSL enabled...');
+            if(await test({rejectUnauthorized:false})) return;
+            process.exitCode=1;
+          })();
+          NODE
       - name: Create database tables
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
